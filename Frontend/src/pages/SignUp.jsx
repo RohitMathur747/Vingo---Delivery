@@ -1,15 +1,43 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "../App";
 
 const SignUp = () => {
   const primaryColor = "#ff4d2d";
-  const hoverColor = "#e64323";
+
   const bgcolor = "#fff9f6";
   const borderColor = "#ddd";
 
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("user");
+  const navigate = useNavigate();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignUp = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/auth/signup`,
+        {
+          fullName,
+          email,
+          mobile,
+          password,
+          role,
+        },
+        { withCredentials: true },
+      );
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div
@@ -42,6 +70,8 @@ const SignUp = () => {
             className="w-full border rounded-lg px-3 py-2 focus:outline-none"
             style={{ border: `1px solid ${borderColor}` }}
             placeholder="Enter your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
           />
         </div>
 
@@ -59,6 +89,8 @@ const SignUp = () => {
             className="w-full border rounded-lg px-3 py-2 focus:outline-none"
             style={{ border: `1px solid ${borderColor}` }}
             placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -77,6 +109,8 @@ const SignUp = () => {
             className="w-full border rounded-lg px-3 py-2 focus:outline-none"
             style={{ border: `1px solid ${borderColor}` }}
             placeholder="Enter your mobile number"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
           />
         </div>
 
@@ -96,6 +130,8 @@ const SignUp = () => {
               className="w-full border rounded-lg px-3 py-2 focus:outline-none"
               style={{ border: `1px solid ${borderColor}` }}
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -122,11 +158,11 @@ const SignUp = () => {
                 key={r}
                 type="button"
                 className="flex-1 border rounded-lg px-3 py-2 
-                text-center font-medium transition-colors duration-200"
+                text-center font-medium transition-colors duration-200 cursor-pointer"
                 style={{
                   backgroundColor: role === r ? primaryColor : "transparent",
-                  color: role === r ? "#fff" : "#333",
                   border: `1px solid ${borderColor}`,
+                  color: role === r ? "#fff" : primaryColor,
                 }}
                 onClick={() => setRole(r)}
               >
@@ -134,6 +170,29 @@ const SignUp = () => {
               </button>
             ))}
           </div>
+
+          <button
+            className={`w-full mt-4 font-semibold py-2 rounded-lg 
+              transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
+            onClick={handleSignUp}
+          >
+            Sign Up
+          </button>
+
+          <button
+            className="w-full mt-4 flex items-center justify-center 
+          gap-2 border rounded-lg px-4 py-2 transition-colors duration-200 border-gray-400 hover:bg-gray-100"
+          >
+            <FcGoogle size={20} />
+            <span>Sign Up with Google</span>
+          </button>
+          <p
+            onClick={() => navigate("/signin")}
+            className={`text-center mt-4 text-gray-600 cursor-pointer`}
+          >
+            Already Have an Account ?
+            <span className="text-[#ff4d2d] cursor-pointer"> Sign In</span>
+          </p>
         </div>
       </div>
     </div>
