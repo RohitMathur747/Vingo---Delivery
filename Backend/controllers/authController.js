@@ -1,6 +1,10 @@
+import bcrypt from "bcrypt";
+import User from "../models/userModel.js";
+import genToken from "../utils/token.js";
+
 const signUp = async (req, res) => {
   try {
-    const { username, email, password, mobile, role } = req.body;
+    const { fullname, email, password, mobile, role } = req.body;
 
     const user = await User.findOne({ email });
     if (user) {

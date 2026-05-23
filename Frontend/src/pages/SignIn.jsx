@@ -1,9 +1,134 @@
-import React from "react";
+import { useState } from "react";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "../App.jsx";
 
 const SignIn = () => {
+  const primaryColor = "#ff4d2d";
+
+  const bgcolor = "#fff9f6";
+  const borderColor = "#ddd";
+
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async () => {
+    try {
+      const res = await axios.post(
+        `${serverUrl}/api/auth/signin`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
-    <div>
-      <div>SignIn Page</div>
+    <div
+      className="min-h-screen w-full flex items-center justify-center p-4"
+      style={{ backgroundColor: bgcolor }}
+    >
+      <div
+        className={`bg-white rounded-xl shadow-lg p-8 w-full max-w-md border-[1px]`}
+        style={{ border: `1px solid ${borderColor}` }}
+      >
+        <h1 className={`text-gray-600 mb-2`} style={{ color: primaryColor }}>
+          Vingo
+        </h1>
+        <p className={`text-gray-600 mb-8`}>
+          SignIn To your account to get delicious food delivery
+        </p>
+
+        {/* Email */}
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className={`block mb-1 text-gray-700 font-medium mb-1`}
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none"
+            style={{ border: `1px solid ${borderColor}` }}
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        {/* password */}
+
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className={`block mb-1 text-gray-700 font-medium mb-1`}
+          >
+            Password
+          </label>
+          <div className="relative">
+            <input
+              type={`${showPassword ? "text" : "password"}`}
+              id="password"
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none"
+              style={{ border: `1px solid ${borderColor}` }}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-[14px] text-gray-500 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {!showPassword ? <FaEye /> : <FaEyeSlash />}
+            </button>
+          </div>
+        </div>
+
+        <div
+          className="text-right mb-4 text-[#ff4d2d] cursor-pointer"
+          onClick={() => navigate("/forgot-password")}
+        >
+          Forgot Password
+        </div>
+
+        <div className="mb-4">
+          <button
+            className={`w-full mt-4 font-semibold py-2 rounded-lg 
+              transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
+            onClick={handleSignIn}
+          >
+            Sign In
+          </button>
+
+          <button
+            className="w-full mt-4 flex items-center justify-center 
+          gap-2 border rounded-lg px-4 py-2 transition-colors duration-200 border-gray-400 hover:bg-gray-100"
+          >
+            <FcGoogle size={20} />
+            <span>Sign Up with Google</span>
+          </button>
+          <p
+            onClick={() => navigate("/signup")}
+            className={`text-center mt-4 text-gray-600 cursor-pointer`}
+          >
+            Want To Create a New Account ?
+            <span className="text-[#ff4d2d] cursor-pointer"> Sign In</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

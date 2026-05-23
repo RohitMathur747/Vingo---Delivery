@@ -4,7 +4,7 @@ import { FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { serverUrl } from "../App";
+import { serverUrl } from "../App.jsx";
 
 const SignUp = () => {
   const primaryColor = "#ff4d2d";
@@ -33,7 +33,7 @@ const SignUp = () => {
         },
         { withCredentials: true },
       );
-      console.log(res.data);
+      console.log(res);
     } catch (err) {
       console.log(err);
     }
@@ -52,7 +52,7 @@ const SignUp = () => {
           Vingo
         </h1>
         <p className={`text-gray-600 mb-8`}>
-          create your account to get delicious food delivery
+          Create your account to get delicious food delivery
         </p>
 
         {/* Full Name */}
