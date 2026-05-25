@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Create a transporter using SMTP
 const transporter = nodemailer.createTransport({
@@ -11,4 +13,11 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendOtpMail = async (to, otp) => {};
+export const sendOtpMail = async (to, otp) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL,
+    to,
+    subject: "Your OTP for Password Reset",
+    html: `<p>Your OTP for password reset is: <strong>${otp}</strong>.It experies in 5 minutes</p>`,
+  });
+};
