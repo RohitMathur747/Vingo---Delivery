@@ -3,6 +3,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { ClipLoader } from "react-spinners";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -10,10 +11,13 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSendOtp = async () => {
+    setLoading(true);
     try {
       const result = await axios.post(
         `${serverUrl}/api/auth/send-otp`,
@@ -23,16 +27,21 @@ const ForgotPassword = () => {
         { withCredentials: true },
       );
       if (result.data.success) {
+        setError("");
         setStep(2);
+        setLoading(false);
       } else {
         alert("Failed to send OTP. Please try again.");
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
+      setError(error?.response?.data?.message);
+      setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
+    setLoading(true);
     try {
       const result = await axios.post(
         `${serverUrl}/api/auth/verify-otp`,
@@ -43,16 +52,21 @@ const ForgotPassword = () => {
         { withCredentials: true },
       );
       if (result.data.success) {
+        setError("");
         setStep(3);
+        setLoading(false);
       } else {
         alert("Failed to send OTP. Please try again.");
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
+      setError(error?.response?.data?.message);
+      setLoading(false);
     }
   };
 
   const handleResetPassword = async () => {
+    setLoading(true);
     if (newPassword != confirmPassword) {
       return null;
     }
@@ -68,12 +82,16 @@ const ForgotPassword = () => {
       console.log(result);
       navigate("/signin");
       if (result.data.success) {
+        setError("");
         setStep(3);
+        setLoading(false);
       } else {
         alert("Failed to send OTP. Please try again.");
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
+      setError(error?.response?.data?.message);
+      setLoading(false);
     }
   };
 
@@ -113,6 +131,7 @@ const ForgotPassword = () => {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </div>
             <button
@@ -120,8 +139,9 @@ const ForgotPassword = () => {
               transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
               onClick={handleSendOtp}
             >
-              Send OTP
+              {loading ? <ClipLoader size={20} color="white" /> : "Send Otp"}
             </button>
+            {error && <p className="text-red-500 text-center">*{error}</p>}
           </div>
         )}
 
@@ -142,6 +162,7 @@ const ForgotPassword = () => {
                 placeholder="Enter your OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
+                required
               />
             </div>
             <button
@@ -149,8 +170,9 @@ const ForgotPassword = () => {
               transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
               onClick={handleVerifyOtp}
             >
-              Verify
+              {loading ? <ClipLoader size={20} color="white" /> : "Verify"}
             </button>
+            {error && <p className="text-red-500 text-center">*{error}</p>}
           </div>
         )}
 
@@ -171,6 +193,7 @@ const ForgotPassword = () => {
                 placeholder="Enter your new password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                required
               />
             </div>
 
@@ -189,6 +212,7 @@ const ForgotPassword = () => {
                 placeholder="Confirm password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                required
               />
             </div>
 
@@ -197,8 +221,13 @@ const ForgotPassword = () => {
               transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
               onClick={handleResetPassword}
             >
-              Update Password
+              {loading ? (
+                <ClipLoader size={20} color="white" />
+              ) : (
+                "Reset Password"
+              )}
             </button>
+            {error && <p className="text-red-500 text-center">*{error}</p>}
           </div>
         )}
       </div>

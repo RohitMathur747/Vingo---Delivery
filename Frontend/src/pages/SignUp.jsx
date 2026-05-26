@@ -7,6 +7,7 @@ import axios from "axios";
 import { serverUrl } from "../App.jsx";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase.js";
+import { ClipLoader } from "react-spinners";
 
 const SignUp = () => {
   const primaryColor = "#ff4d2d";
@@ -21,6 +22,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
     try {
@@ -36,14 +39,20 @@ const SignUp = () => {
         { withCredentials: true },
       );
       console.log(res);
+      setError("");
+      setLoading(false);
     } catch (err) {
       console.log(err);
+      setError(
+        err?.response?.data?.message || err.message || "Something went wrong",
+      );
+      setLoading(false);
     }
   };
 
   const handleGoogleAuth = async () => {
     if (!mobile) {
-      return alert("mobile no is required");
+      return setError("mobile no is required");
     }
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
@@ -62,6 +71,9 @@ const SignUp = () => {
       console.log(data);
     } catch (error) {
       console.log(error);
+      setError(
+        error?.response?.data?.message || error.message || "Google auth failed",
+      );
     }
   };
 
@@ -98,6 +110,7 @@ const SignUp = () => {
             placeholder="Enter your full name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            required
           />
         </div>
 
@@ -117,6 +130,7 @@ const SignUp = () => {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
 
@@ -137,6 +151,7 @@ const SignUp = () => {
             placeholder="Enter your mobile number"
             value={mobile}
             onChange={(e) => setMobile(e.target.value)}
+            required
           />
         </div>
 
@@ -158,6 +173,7 @@ const SignUp = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <button
               type="button"
@@ -201,9 +217,12 @@ const SignUp = () => {
             className={`w-full mt-4 font-semibold py-2 rounded-lg 
               transition duration-200 bg-[#ff4d2d] text-white hover:bg-[#e64323] cursor-pointer`}
             onClick={handleSignUp}
+            disabled={loading}
           >
+            {loading ? <ClipLoader size={20} color="white" /> : "Signup"}
             Sign Up
           </button>
+          {error && <p className="text-red-500 text-center">*{error}</p>}
 
           <button
             className="w-full mt-4 flex items-center justify-center 
