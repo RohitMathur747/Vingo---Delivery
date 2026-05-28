@@ -4,6 +4,7 @@ import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
+import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
