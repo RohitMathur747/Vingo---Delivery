@@ -142,15 +142,23 @@ const resetPassword = async (req, res) => {
 const googleAuth = async (req, res) => {
   try {
     const { fullname, email, mobile } = req.body;
+    const role = req.body?.role || "user";
+
     const user = await User.findOne({ email });
     if (!user) {
       user = await User.create({
-        fullname,
+        fullname: fullname || email,
         email,
-        mobile,
+        mobile: mobile || "",
         role,
       });
+    } else {
+      // keep existing user fields; optionally update fullname if missing
+      if (!user.fullname && fullname) user.fullname = fullname;
+      if (!user.role && role) user.role = role;
+      await user.save();
     }
+
     const token = await genToken(user._id);
     res.cookie("token", token, {
       secure: false,
